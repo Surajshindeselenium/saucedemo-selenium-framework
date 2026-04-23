@@ -39,7 +39,8 @@ jobs:
       if: inputs.browser == 'chrome'
       run: |
         sudo apt-get update
-        sudo apt-get install -y chromium-browser
+        sudo apt-get install -y chromium-browser chromium-codecs-ffmpeg
+        sudo apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libgbm1 libxkbcommon0 libpango-1.0-0 libpangocairo-1.0-0
     
     - name: Install Browser - Firefox
       if: inputs.browser == 'firefox'
@@ -48,11 +49,11 @@ jobs:
         sudo apt-get install -y firefox
     
     - name: Run Tests
-      run: mvn clean test -Dbrowser=${{ inputs.browser }} -Denvironment=${{ inputs.environment }}
+      run: mvn clean test -Dbrowser=${{ inputs.browser }} -Denvironment=${{ inputs.environment }} -DHEADLESS=true
     
     - name: Upload Test Reports
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: manual-test-reports-${{ inputs.browser }}
         path: reports/
@@ -60,7 +61,7 @@ jobs:
     
     - name: Upload Screenshots on Failure
       if: failure()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: failure-screenshots-${{ inputs.browser }}
         path: reports/screenshots/

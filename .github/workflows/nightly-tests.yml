@@ -19,13 +19,14 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-    - name: Install Chrome Browser
+    - name: Install Chrome Browser and Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y chromium-browser
+        sudo apt-get install -y chromium-browser chromium-codecs-ffmpeg
+        sudo apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libgbm1 libxkbcommon0 libpango-1.0-0 libpangocairo-1.0-0
 
     - name: Run Full Test Suite
-      run: mvn clean test -Dbrowser=chrome -DsuiteXmlFile=testng.xml
+      run: mvn clean test -Dbrowser=chrome -DsuiteXmlFile=testng.xml -DHEADLESS=true
 
     - name: Generate Test Report
       if: always()
@@ -34,7 +35,7 @@ jobs:
 
     - name: Upload Reports
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: nightly-test-reports
         path: reports/

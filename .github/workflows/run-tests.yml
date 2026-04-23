@@ -24,13 +24,14 @@ jobs:
         distribution: 'temurin'
         cache: maven
     
-    - name: Install Chrome Browser
+    - name: Install Chrome Browser and Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y chromium-browser
+        sudo apt-get install -y chromium-browser chromium-codecs-ffmpeg
+        sudo apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libgbm1 libxkbcommon0 libpango-1.0-0 libpangocairo-1.0-0
     
     - name: Run Tests with Maven
-      run: mvn clean test -Dbrowser=chrome
+      run: mvn clean test -Dbrowser=chrome -DHEADLESS=true
     
     - name: Upload Test Reports
       if: always()
@@ -63,7 +64,7 @@ jobs:
     
     steps:
     - name: Download Test Reports
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: test-reports
     
