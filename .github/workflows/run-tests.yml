@@ -90,11 +90,18 @@ jobs:
       with:
         name: surefire-reports
     
+    - name: Debug - List Downloaded Files
+      run: |
+        echo "Current directory contents:"
+        ls -la
+        echo "Surefire reports directory:"
+        ls -la surefire-reports/ || echo "surefire-reports directory not found"
+    
     - name: Publish Test Report
       uses: dorny/test-reporter@v1.9.1
       if: always()
       with:
         name: TestNG Test Results
-        path: '**/surefire-reports/TEST-*.xml'
-        reporter: java-junit
+        path: 'surefire-reports/TEST-*.xml'
+        reporter: testng
         fail-on-error: false
