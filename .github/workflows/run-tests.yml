@@ -91,7 +91,7 @@ jobs:
         name: surefire-reports
     
     - name: Publish Test Report
-      uses: dorny/test-reporter@v1
+      uses: dorny/test-reporter@v1.9.1
       if: always()
       with:
         name: TestNG Test Results
