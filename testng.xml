@@ -1,0 +1,18 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Automation Suite">
+    <listeners>
+        <listener class-name="testBase.TestListener"/>
+    </listeners>
+
+    <!-- Checkout Tests -->
+    <test name="Checkout End-to-End Tests">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <!-- Recommended: Header-based Excel data approach -->
+            <class name="testCases.SauceLabsBackpackCheckoutTest"/>
+
+            <!-- Alternative: Direct cell reference approach -->
+            <!-- <class name="testCases.SauceLabsBackpackCheckoutTest"/> -->
+        </classes>
+    </test>
+</suite>

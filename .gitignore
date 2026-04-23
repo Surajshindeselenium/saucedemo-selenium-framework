@@ -1,0 +1,9 @@
+# Project exclude paths
+/target/
+/reports/
+/.idea/
+/EXCEL_UTILITY_GUIDE.md
+/POM_STRUCTURE.md
+/QUICK_REFERENCE.md
+/TEST_CASE_GUIDE.md
+/TEST_IMPLEMENTATION_SUMMARY.md
