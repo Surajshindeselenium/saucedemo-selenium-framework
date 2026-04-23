@@ -33,6 +33,13 @@ jobs:
     - name: Run Tests with Maven
       run: mvn clean test -Dbrowser=chrome -DHEADLESS=true
     
+    - name: Ensure Reports Directory Exists
+      if: always()
+      run: |
+        mkdir -p reports
+        mkdir -p reports/screenshots
+        echo "Test execution completed" > reports/test-summary.txt
+    
     - name: Upload Test Reports
       if: always()
       uses: actions/upload-artifact@v4
