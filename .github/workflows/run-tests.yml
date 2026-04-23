@@ -60,7 +60,9 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: surefire-reports
-        path: TEST-*.xml
+        path: |
+          TEST-*.xml
+        if-no-files-found: warn
         retention-days: 30
     
     - name: Upload Screenshots
@@ -112,5 +114,5 @@ jobs:
       with:
         name: TestNG Test Results
         path: 'surefire-reports/TEST-*.xml'
-        reporter: java-junit
+        reporter: testng
         fail-on-error: false
