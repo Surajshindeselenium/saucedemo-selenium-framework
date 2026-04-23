@@ -41,6 +41,14 @@ jobs:
         path: reports/
         retention-days: 30
     
+    - name: Upload Surefire Reports
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: surefire-reports
+        path: target/surefire-reports/
+        retention-days: 30
+    
     - name: Upload Screenshots
       if: failure()
       uses: actions/upload-artifact@v4
@@ -68,11 +76,16 @@ jobs:
       with:
         name: test-reports
     
+    - name: Download Surefire Reports
+      uses: actions/download-artifact@v4
+      with:
+        name: surefire-reports
+    
     - name: Publish Test Report
       uses: dorny/test-reporter@v1
       if: always()
       with:
         name: TestNG Test Results
-        path: '**/target/surefire-reports/TEST-*.xml'
+        path: '**/surefire-reports/TEST-*.xml'
         reporter: 'java-testng'
         fail-on-error: false
