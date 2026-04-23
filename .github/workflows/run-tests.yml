@@ -1,4 +1,4 @@
-name: Saucedemo Test Suite - Run Tests
+name: Saucedemo Test Suite - Tests
 
 on:
   push:
