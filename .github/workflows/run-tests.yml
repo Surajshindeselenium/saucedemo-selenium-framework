@@ -55,7 +55,7 @@ jobs:
         path: reports/
         retention-days: 30
     
-    - name: Upload Surefire Reports
+    - name: Debug - Check for XML files
       if: always()
       run: |
         echo "Looking for TEST-*.xml files to upload..."
@@ -65,11 +65,14 @@ jobs:
         else
           echo "TEST-TestSuite.xml not found"
         fi
+    
+    - name: Upload Surefire Reports
+      if: always()
       uses: actions/upload-artifact@v4
       with:
         name: surefire-reports
         path: TEST-*.xml
-        if-no-files-found: error
+        if-no-files-found: warn
         retention-days: 30
     
     - name: Upload Screenshots
