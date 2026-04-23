@@ -57,12 +57,19 @@ jobs:
     
     - name: Upload Surefire Reports
       if: always()
+      run: |
+        echo "Looking for TEST-*.xml files to upload..."
+        find . -name "TEST-*.xml" -type f -exec ls -la {} \;
+        if [ -f "TEST-TestSuite.xml" ]; then
+          echo "Found TEST-TestSuite.xml, uploading..."
+        else
+          echo "TEST-TestSuite.xml not found"
+        fi
       uses: actions/upload-artifact@v4
       with:
         name: surefire-reports
-        path: |
-          TEST-*.xml
-        if-no-files-found: warn
+        path: TEST-*.xml
+        if-no-files-found: error
         retention-days: 30
     
     - name: Upload Screenshots
@@ -114,5 +121,5 @@ jobs:
       with:
         name: TestNG Test Results
         path: 'surefire-reports/TEST-*.xml'
-        reporter: testng
+        reporter: java-junit
         fail-on-error: false
