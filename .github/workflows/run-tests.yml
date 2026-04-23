@@ -33,6 +33,13 @@ jobs:
     - name: Run Tests with Maven
       run: mvn clean test -Dbrowser=chrome -DHEADLESS=true
     
+    - name: Debug - Check Surefire Reports Generation
+      if: always()
+      run: |
+        echo "Checking if surefire reports were generated..."
+        ls -la target/surefire-reports/ || echo "target/surefire-reports/ directory not found"
+        find target/ -name "TEST-*.xml" -type f || echo "No TEST-*.xml files found"
+    
     - name: Ensure Reports Directory Exists
       if: always()
       run: |
@@ -103,5 +110,5 @@ jobs:
       with:
         name: TestNG Test Results
         path: 'surefire-reports/TEST-*.xml'
-        reporter: java-junit
+        reporter: testng
         fail-on-error: false

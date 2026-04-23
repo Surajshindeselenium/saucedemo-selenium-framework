@@ -60,13 +60,23 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <useSystemClassLoader>false</useSystemClassLoader>
-                </configuration>
-            </plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-surefire-plugin</artifactId>
+                 <version>3.0.0</version>
+                 <configuration>
+                     <useSystemClassLoader>false</useSystemClassLoader>
+                     <!-- Explicitly enable XML reports -->
+                     <disableXmlReport>false</disableXmlReport>
+                     <!-- Ensure reports are generated -->
+                     <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                     <!-- Use TestNG -->
+                     <testNGArtifactName>org.testng:testng</testNGArtifactName>
+                     <testNGVersion>7.9.0</testNGVersion>
+                     <suiteXmlFiles>
+                         <suiteXmlFile>testng.xml</suiteXmlFile>
+                     </suiteXmlFiles>
+                 </configuration>
+             </plugin>
         </plugins>
     </build>
 </project>
