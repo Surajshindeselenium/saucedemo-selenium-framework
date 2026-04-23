@@ -103,5 +103,5 @@ jobs:
       with:
         name: TestNG Test Results
         path: 'surefire-reports/TEST-*.xml'
-        reporter: testng
+        reporter: java-junit
         fail-on-error: false
