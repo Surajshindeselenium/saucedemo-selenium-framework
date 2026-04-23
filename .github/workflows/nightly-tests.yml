@@ -1,0 +1,54 @@
+name: Nightly Test Execution
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Runs daily at 2 AM UTC
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  nightly-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Install Chrome Browser
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y chromium-browser
+
+    - name: Run Full Test Suite
+      run: mvn clean test -Dbrowser=chrome -DsuiteXmlFile=testng.xml
+
+    - name: Generate Test Report
+      if: always()
+      run: |
+        echo "Test execution completed at $(date)" > test-summary.txt
+
+    - name: Upload Reports
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: nightly-test-reports
+        path: reports/
+        retention-days: 60
+
+    - name: Send Notification on Failure
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '❌ Nightly test execution failed. Check the workflow logs for details.'
+          })
+

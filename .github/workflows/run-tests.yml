@@ -1,0 +1,78 @@
+name: Selenium Test Suite - Run Tests
+
+on:
+  push:
+    branches: [ feature-branch ]
+  pull_request:
+    branches: [ feature-branch ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        java-version: ['17']
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up JDK ${{ matrix.java-version }}
+      uses: actions/setup-java@v3
+      with:
+        java-version: ${{ matrix.java-version }}
+        distribution: 'temurin'
+        cache: maven
+    
+    - name: Install Chrome Browser
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y chromium-browser
+    
+    - name: Run Tests with Maven
+      run: mvn clean test -Dbrowser=chrome
+    
+    - name: Upload Test Reports
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-reports
+        path: reports/
+        retention-days: 30
+    
+    - name: Upload Screenshots
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: failure-screenshots
+        path: reports/screenshots/
+        retention-days: 7
+    
+    - name: Publish HTML Report
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: extent-report
+        path: reports/ExtentReport.html
+
+  test-results:
+    name: Publish Test Results
+    needs: test
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Download Test Reports
+      uses: actions/download-artifact@v3
+      with:
+        name: test-reports
+    
+    - name: Publish Test Report
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: TestNG Test Results
+        path: '**/target/surefire-reports/TEST-*.xml'
+        reporter: 'java-testng'
+        fail-on-error: false
+

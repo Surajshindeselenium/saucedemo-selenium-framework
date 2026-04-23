@@ -1,0 +1,72 @@
+name: Tests with Retry Logic
+
+on:
+  push:
+    branches: [ feature-branch ]
+    paths:
+      - 'src/**'
+      - 'pom.xml'
+      - 'testng.xml'
+  pull_request:
+    branches: [ feature-branch ]
+    paths:
+      - 'src/**'
+      - 'pom.xml'
+      - 'testng.xml'
+
+jobs:
+  test-with-retry:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    
+    - name: Install Chrome Browser
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y chromium-browser
+    
+    - name: Run Tests with Maven Retry
+      run: |
+        mvn clean test \
+          -Dbrowser=chrome \
+          -Dmaven.test.retry.count=1 \
+          --fail-at-end
+    
+    - name: Archive Test Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: |
+          reports/
+          target/surefire-reports/
+        retention-days: 30
+    
+    - name: Comment PR with Test Results
+      if: always() && github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const resultsPath = './target/surefire-reports';
+          
+          if (fs.existsSync(resultsPath)) {
+            const files = fs.readdirSync(resultsPath);
+            const comment = `## ✅ Test Execution Summary\n\n- **Total Test Files**: ${files.length}\n- **Status**: Tests completed\n- **Reports**: Check artifacts for detailed reports`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+          }
+
