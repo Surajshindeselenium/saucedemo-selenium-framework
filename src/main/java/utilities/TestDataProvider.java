@@ -8,7 +8,7 @@ import java.util.Map;
  * Provides easy access to customer and test data
  */
 public class TestDataProvider {
-    private static final String TEST_DATA_PATH = "src/main/resources/testdata/custDetails.xlsx";
+    private static final String TEST_DATA_PATH = "src/main/resources/testData/custDetails.xlsx";
     private ExcelUtility excelUtility;
 
     /**
@@ -138,4 +138,3 @@ public class TestDataProvider {
         excelUtility.closeWorkbook();
     }
 }
-
