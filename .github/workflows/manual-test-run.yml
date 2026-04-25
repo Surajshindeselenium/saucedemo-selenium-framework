@@ -1,0 +1,85 @@
+name: Manual Test Execution
+
+on:
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: 'Browser to run tests on'
+        required: true
+        default: 'chrome'
+        type: choice
+        options:
+          - chrome
+          - firefox
+          - edge
+      environment:
+        description: 'Test Environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  manual-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Install Browser - Chrome
+        if: inputs.browser == 'chrome'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          sudo apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libgbm1 libxkbcommon0 libpango-1.0-0 libpangocairo-1.0-0
+
+      - name: Install Browser - Firefox
+        if: inputs.browser == 'firefox'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y firefox
+
+      - name: Install Browser - Edge
+        if: inputs.browser == 'edge'
+        run: |
+          sudo apt-get update
+          curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+          sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
+          sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge.list'
+          sudo apt-get update
+          sudo apt-get install -y microsoft-edge-stable
+
+      - name: Run Tests
+        run: mvn clean test -Dbrowser=${{ inputs.browser }} -Denvironment=${{ inputs.environment }} -DHEADLESS=true
+
+      - name: Upload Test Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: manual-test-reports-${{ inputs.browser }}
+          path: |
+            target/surefire-reports/
+            target/extent-reports/
+          retention-days: 30
+
+      - name: Upload Screenshots on Failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-screenshots-${{ inputs.browser }}
+          path: reports/screenshots/
+          retention-days: 14
