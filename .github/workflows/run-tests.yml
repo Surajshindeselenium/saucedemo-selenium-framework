@@ -6,14 +6,11 @@ on:
   pull_request:
     branches: [ feature-branch ]
 
-# ✅ Add this block
 permissions:
   contents: read
-  checks: write
-  pull-requests: write
 
 jobs:
-  test:
+  run-saucedemo-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,23 +27,24 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
-          sudo apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libgbm1 libxkbcommon0 libpango-1.0-0 libpangocairo-1.0-0
+          sudo apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libcups2 \
+            libdrm2 libgbm1 libxkbcommon0 libpango-1.0-0 libpangocairo-1.0-0
 
       - name: Run Tests with Maven
         run: mvn clean test -Dbrowser=chrome -DHEADLESS=true
 
-      - name: Publish Test Results
+      - name: Debug - List Generated Report Files
         if: always()
-        uses: dorny/test-reporter@v1
-        with:
-          name: TestNG Test Results
-          path: 'target/surefire-reports/TEST-*.xml'
-          reporter: java-junit
-          fail-on-error: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: find target/ -name "*.xml" | head -20
 
-      - name: Upload Reports
+      - name: Upload Test Results (for Reporter)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: target/surefire-reports/TEST-*.xml
+
+      - name: Upload All Reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -56,3 +54,30 @@ jobs:
             target/extent-reports/
             target/allure-results/
           retention-days: 30
+
+  publish-results:
+    runs-on: ubuntu-latest
+    needs: run-saucedemo-tests
+    if: always()
+
+    permissions:
+      checks: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Test Results
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results
+
+      - name: Publish Test Results
+        uses: dorny/test-reporter@v2
+        with:
+          name: TestNG Test Results
+          path: 'TEST-*.xml'
+          reporter: java-junit
+          fail-on-error: false
+          token: ${{ secrets.GITHUB_TOKEN }}
