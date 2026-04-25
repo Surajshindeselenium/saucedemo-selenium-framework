@@ -23,12 +23,11 @@ jobs:
     - name: Install Chrome and Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y chromium-browser chromium-codecs-ffmpeg
+        sudo apt-get install -y google-chrome-stable
         sudo apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libgbm1 libxkbcommon0 libpango-1.0-0 libpangocairo-1.0-0
     
     - name: Run Tests with Maven
       run: mvn clean test -Dbrowser=chrome -DHEADLESS=true
-      continue-on-error: true
     
     - name: Publish Test Results
       if: always()
@@ -38,6 +37,8 @@ jobs:
         path: 'target/surefire-reports/TEST-*.xml'
         reporter: java-junit
         fail-on-error: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Upload Reports
       if: always()
@@ -45,8 +46,7 @@ jobs:
       with:
         name: test-reports
         path: |
-          *.xml
-          *.html
-          reports/
           target/surefire-reports/
+          target/extent-reports/        # or wherever your HTML reports go
+          target/allure-results/        # if using Allure
         retention-days: 30
