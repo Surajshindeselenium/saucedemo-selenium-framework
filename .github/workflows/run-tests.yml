@@ -6,14 +6,13 @@ on:
   pull_request:
     branches: [ feature-branch ]
 
-# ✅ Add this block
 permissions:
   contents: read
   checks: write
   pull-requests: write
 
 jobs:
-  test:
+  run-saucedemo-tests:
     runs-on: ubuntu-latest
 
     steps:
