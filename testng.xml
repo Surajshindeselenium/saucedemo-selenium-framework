@@ -5,11 +5,13 @@
     </listeners>
 
     <!-- Checkout Tests -->
-    <test name="Checkout End-to-End Tests">
+    <test name="SauceLabs Tests">
         <parameter name="browser" value="chrome"/>
         <classes>
             <!-- Recommended: Header-based Excel data approach -->
             <class name="testCases.SauceLabsBackpackCheckoutTest"/>
+            <class name="testCases.SauceLabsBackpackCheckoutTestWithHeaders"/>
+            <class name="testCases.SauceLabsFailedLogin"/>
 
             <!-- Alternative: Direct cell reference approach -->
             <!-- <class name="testCases.SauceLabsBackpackCheckoutTest"/> -->

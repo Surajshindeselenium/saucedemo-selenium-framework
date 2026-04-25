@@ -14,6 +14,7 @@ public class LoginPage extends BasePage {
     private final By loginButton = By.id("login-button");
     private final By errorMessage = By.cssSelector("[data-test='error']");
     private final By sauceLogo = By.cssSelector(".login_logo");
+    private final By locked_user_error = By.xpath("//h3[contains(text(),'Sorry, this user has been locked out.')]");
 
     public LoginPage(WebDriver driver) {
         super(driver);
@@ -52,8 +53,8 @@ public class LoginPage extends BasePage {
     /**
      * Get error message text
      */
-    public String getErrorMessage() {
-        return getText(errorMessage);
+    public String getLockedUserErrorMessage() {
+        return getText(locked_user_error);
     }
 
     /**
