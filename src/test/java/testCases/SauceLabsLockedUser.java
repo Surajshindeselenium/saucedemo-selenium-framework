@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 import pages.LoginPage;
 import testBase.BaseTest;
 
-public class SauceLabsFailedLogin extends BaseTest {
+public class SauceLabsLockedUser extends BaseTest {
     @Test(description = "Verify that login fails with locked credentials")
     public void testLockedUserLogin() {
         // Initialize page objects

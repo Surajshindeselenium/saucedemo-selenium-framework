@@ -11,7 +11,7 @@
             <!-- Recommended: Header-based Excel data approach -->
             <class name="testCases.SauceLabsBackpackCheckoutTest"/>
             <class name="testCases.SauceLabsBackpackCheckoutTestWithHeaders"/>
-            <class name="testCases.SauceLabsFailedLogin"/>
+            <class name="testCases.SauceLabsLockedUser"/>
 
             <!-- Alternative: Direct cell reference approach -->
             <!-- <class name="testCases.SauceLabsBackpackCheckoutTest"/> -->
