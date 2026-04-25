@@ -52,9 +52,9 @@ public class SauceLabsBackpackCheckoutTestWithHeaders extends BaseTest {
             
             Assert.assertNotNull(testData, "Test data should not be null");
             
-            String firstName = testData.get("firstName");
-            String lastName = testData.get("lastName");
-            String postalCode = testData.get("postalCode");
+            String firstName = testData.get("First Name");
+            String lastName = testData.get("Last Name");
+            String postalCode = testData.get("Zip Code");
             
             System.out.println("═══════════════════════════════════════");
             System.out.println("Test Data from Excel (2nd Row):");
